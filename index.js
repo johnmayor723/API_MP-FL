@@ -16,7 +16,7 @@ const agentRoutes =require('./routes/agentRoutes');
 
 
 
-const cron =require('./config/cron');
+const couponCronJob =require('./config/cron');
 const connectDB = require("./config/database")
 
 
@@ -26,9 +26,8 @@ const DBURL = "mongodb+srv://Pantryhubadmin:pantryhub123@cluster0.qjbxk.mongodb.
 
 // Connect to MongoDB
 connectDB()
-
 //Start cron job
-cron()
+couponCronJob()
 
 
 // Middleware
