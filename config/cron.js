@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const Coupon = require("../models/coupon"); // Update path based on your folder structure
+const Coupon = require("../models/Coupon"); // Update path based on your folder structure
 
 // Schedule the cron job
 cron.schedule("59 23 28-31 * *", async () => {
