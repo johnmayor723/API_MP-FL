@@ -16,7 +16,7 @@ const agentRoutes =require('./routes/agentRoutes');
 
 
 
-const cron =require('./models/cron');
+const cron =require('./config/cron');
 const connectDB = require("./config/database")
 
 
