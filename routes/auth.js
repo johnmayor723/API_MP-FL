@@ -3,8 +3,9 @@ const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
+const { register, login, activateCoupon, validateCoupon, updateCouponValue } = require('../controllers/authController');
 const router = express.Router();
+
 
 // Register a new user
 router.post(
@@ -109,5 +110,17 @@ router.post(
     }
   }
 );
+//user's coupon routes
+
+// Validate Active Coupon
+router.post('/activate-coupon', activateCoupon);
+
+// Validate Active Coupon
+router.post('/validate-coupon', validateCoupon);
+
+// Update Coupon Value
+router.post('/update-coupon', updateCouponValue);
+
+
 
 module.exports = router;
