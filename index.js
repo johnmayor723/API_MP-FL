@@ -11,11 +11,12 @@ const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const categoryRoutes =require('./routes/categoryRoutes');
+const agentRoutes =require('./routes/agentRoutes');
 
 
 
 
-
+const cron =require('../models/cron');
 const connectDB = require("./config/database")
 
 
@@ -25,6 +26,9 @@ const DBURL = "mongodb+srv://Pantryhubadmin:pantryhub123@cluster0.qjbxk.mongodb.
 
 // Connect to MongoDB
 connectDB()
+
+//Start cron job
+cron()
 
 
 // Middleware
@@ -42,6 +46,7 @@ app.use(methodOverride('_method'))
 
 // 
 app.use("/api/auth", authRoutes)
+app.use("/api/agent", agentRoutes)
 app.use("/api/products", productRoutes)
 app.use('/api/orders', orderRoutes);
 app.use('/api/carts', cartRoutes);
