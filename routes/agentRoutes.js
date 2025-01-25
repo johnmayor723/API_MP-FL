@@ -77,7 +77,7 @@ router.patch('/', async (req, res) => {
   const { couponCode, amount } = req.body;
 
   try {
-    const agent = await Agent.findOne({ couponIdentifier });
+    const agent = await Agent.findOne({ couponCode });
     if (!agent) {
       return res.status(404).json({ message: 'Agent not found' });
     }
