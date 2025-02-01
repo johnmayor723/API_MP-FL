@@ -3,7 +3,9 @@ const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { register, login, activateCoupon, validateCoupon, updateCouponValue } = require('../controllers/authController');
+const { register, login, activateCoupon, validateCoupon, updateCouponValue,addToWishlist,
+  addToRecentlyViewed,updateOrderHistory, getUserProfile,updateAddress
+} = require("../controllers } = require('../controllers/authController');
 const router = express.Router();
 
 
@@ -121,6 +123,12 @@ router.post('/validate-coupon', validateCoupon);
 // Update Coupon Value
 router.post('/update-coupon', updateCouponValue);
 
+// user accounts routes
+router.post("/wishlist",  addToWishlist);
+router.post("/recently-viewed", addToRecentlyViewed);
+router.post("/update-order-history", updateOrderHistory);
+router.post("/update-address", updateAddress);
+router.get("/profile", getUserProfile);
 
 
 module.exports = router;
