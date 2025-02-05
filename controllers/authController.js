@@ -183,3 +183,108 @@ exports.updateCouponValue = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+// Add to Wishlist
+const addToWishlist = async (req, res) => {
+  try {
+    const user = req.user; // Assume req.user is populated from protect middleware
+    const { productId } = req.body;
+
+    if (!productId) return res.status(400).json({ message: "Product ID is required." });
+
+    // Check if the product is already in the wishlist
+    if (user.wishlist.includes(productId)) {
+      return res.status(400).json({ message: "Product already in wishlist." });
+    }
+
+    // Add to the wishlist
+    user.wishlist.push(productId);
+    await user.save();
+
+    res.status(200).json({ message: "Product added to wishlist.", wishlist: user.wishlist });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Add to Recently Viewed
+const addToRecentlyViewed = async (req, res) => {
+  try {
+    const user = req.user; // Assume req.user is populated from protect middleware
+    const { productId } = req.body;
+
+    if (!productId) return res.status(400).json({ message: "Product ID is required." });
+
+    // Remove the product if it already exists in the recentlyViewed array
+    user.recentlyViewed = user.recentlyViewed.filter((id) => id.toString() !== productId);
+
+    // Add the product to the beginning of the array
+    user.recentlyViewed.unshift(productId);
+
+    // Ensure the array does not exceed 10 products
+    if (user.recentlyViewed.length > 10) {
+      user.recentlyViewed.pop();
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: "Product added to recently viewed.", recentlyViewed: user.recentlyViewed });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Update Order History
+const updateOrderHistory = async (req, res) => {
+  try {
+    const user = req.user; // Assume req.user is populated from protect middleware
+    const { orderId } = req.body;
+
+    if (!orderId) return res.status(400).json({ message: "Order ID is required." });
+
+    // Add the order to the user's purchase history
+    user.purchaseHistory.push(orderId);
+    await user.save();
+
+    res.status(200).json({ message: "Order history updated.", purchaseHistory: user.purchaseHistory });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Update Address
+const updateAddress = async (req, res) => {
+  try {
+    const user = req.user; // Assume req.user is populated from protect middleware
+    const { address } = req.body;
+
+    if (!address) return res.status(400).json({ message: "Address is required." });
+
+    // Update the user's address
+    user.address = address;
+    await user.save();
+
+    res.status(200).json({ message: "Address updated.", address: user.address });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+  // Get User Profile
+const getUserProfile = async (req, res) => {
+  try {
+    const user = req.user; // Assume req.user is populated from protect middleware
+
+    const profile = {
+      name: user.name,
+      email: user.email,
+      address: user.address,
+      wishlist: user.wishlist,
+      recentlyViewed: user.recentlyViewed,
+      purchaseHistory: user.purchaseHistory,
+    };
+
+    res.status(200).json({ profile });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
