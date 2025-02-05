@@ -9,7 +9,13 @@ const userSchema = new mongoose.Schema({
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   coupons: [{ couponId: String }], // Array of used coupon promo identifiers
   recentlyViewed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-
+  address: {
+    hnumber: { type: Number, required: true },
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true }
+  }
+});
 });
 
 userSchema.pre('save', async function (next) {
