@@ -184,7 +184,7 @@ exports.updateCouponValue = async (req, res) => {
   }
 };
 // Add to Wishlist
-const addToWishlist = async (req, res) => {
+exports.addToWishlist = async (req, res) => {
   try {
     const user = req.user; // Assume req.user is populated from protect middleware
     const { productId } = req.body;
@@ -208,7 +208,7 @@ const addToWishlist = async (req, res) => {
 
 
 // Add to Recently Viewed
-const addToRecentlyViewed = async (req, res) => {
+exports.addToRecentlyViewed = async (req, res) => {
   try {
     const user = req.user; // Assume req.user is populated from protect middleware
     const { productId } = req.body;
@@ -234,7 +234,7 @@ const addToRecentlyViewed = async (req, res) => {
   }
 };
 // Update Order History
-const updateOrderHistory = async (req, res) => {
+exports.updateOrderHistory = async (req, res) => {
   try {
     const user = req.user; // Assume req.user is populated from protect middleware
     const { orderId } = req.body;
@@ -251,7 +251,7 @@ const updateOrderHistory = async (req, res) => {
   }
 };
 // Update Address
-const updateAddress = async (req, res) => {
+exports.updateAddress = async (req, res) => {
   try {
     const user = req.user; // Assume req.user is populated from protect middleware
     const { address } = req.body;
@@ -269,7 +269,7 @@ const updateAddress = async (req, res) => {
 };
 
   // Get User Profile
-const getUserProfile = async (req, res) => {
+exports.getUserProfile = async (req, res) => {
   try {
     const user = req.user; // Assume req.user is populated from protect middleware
 
