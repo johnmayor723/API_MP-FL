@@ -21,7 +21,7 @@ const connectDB = require("./config/database")
 
 
 // variables
-const PORT = process.env.PORT || 3000;  // Use the port assigned by Render or default to 3000
+const PORT = 3000;  // Use the port assigned by Render or default to 3000
 const DBURL = "mongodb+srv://Pantryhubadmin:pantryhub123@cluster0.qjbxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 // Connect to MongoDB
