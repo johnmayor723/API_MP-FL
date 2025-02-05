@@ -3,10 +3,19 @@ const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { register, login, activateCoupon, validateCoupon, updateCouponValue,addToWishlist,
-  addToRecentlyViewed,updateOrderHistory, getUserProfile,updateAddress
-} = require("../controllers } = require('../controllers/authController');
 const router = express.Router();
+const { 
+  register, 
+  login, 
+  activateCoupon, 
+  validateCoupon, 
+  updateCouponValue, 
+  addToWishlist, 
+  addToRecentlyViewed, 
+  updateOrderHistory, 
+  getUserProfile, 
+  updateAddress 
+} = require("../controllers/authController");
 
 
 // Register a new user
