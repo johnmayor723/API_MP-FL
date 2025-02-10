@@ -91,5 +91,33 @@ router.patch('/', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+// Verify Coupon Code Route
+router.post('/verify-couponCode', async (req, res) => {
+  const { couponCode } = req.body;
+
+  if (!couponCode) {
+    return res.status(400).json({ message: 'Coupon code is required' });
+  }
+
+  try {
+    // Search for the coupon code in the CouponCode model
+    const coupon = await CouponCode.findOne({ couponCode });
+
+    if (!coupon) {
+      return res.status(404).json({ message: 'Coupon code not found' });
+    }
+
+    // Check if the coupon is valid
+    if (coupon.isValid) {
+      return res.status(200).json({ couponCode: coupon });
+    } else {
+      return res.status(400).json({ message: 'Coupon code is not valid' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;
