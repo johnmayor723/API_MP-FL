@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   coupons: [{ couponId: String }], // Array of used coupon promo identifiers
   recentlyViewed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   address: {
+    mobile:{ type:Number },
     hnumber: { type: Number, required: true },
     street: { type: String, required: true },
     city: { type: String, required: true },
