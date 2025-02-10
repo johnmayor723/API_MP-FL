@@ -271,20 +271,20 @@ exports.updateAddress = async (req, res) => {
   // Get User Profile
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = req.user; // Assume req.user is populated from protect middleware
+    const { userId } = req.body; // Get userId from request body
 
-    const profile = {
-      name: user.name,
-      email: user.email,
-      address: user.address,
-      wishlist: user.wishlist,
-      recentlyViewed: user.recentlyViewed,
-      purchaseHistory: user.purchaseHistory,
-    };
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
 
-    res.status(200).json({ profile });
+    const user = await User.findById(userId); // Find user by ID
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ user }); // Return found user as JSON
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
