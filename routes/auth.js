@@ -137,7 +137,7 @@ router.post("/wishlist",  addToWishlist);
 router.post("/recently-viewed", addToRecentlyViewed);
 router.post("/update-order-history", updateOrderHistory);
 router.post("/update-address", updateAddress);
-router.get("/profile", getUserProfile);
+router.post("/profile", getUserProfile);
 
 
 module.exports = router;
