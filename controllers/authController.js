@@ -142,34 +142,31 @@ exports.validateCoupon = async (req, res) => {
 
 // Update Coupon Value
 exports.updateCouponValue = async (req, res) => {
-  const { couponCode, usedValue } = req.body;
+  const { couponCode, usedValue, userId } = req.body;
 
   try {
-    // Fetch the authenticated user's ID from the session
-    const {userId} = req.body;
-
-    // Validate if the user ID exists in the session
+    // Validate if the user ID exists
     if (!userId) {
       return res.status(401).json({ message: 'User not authenticated' });
     }
 
-    // Find an active coupon associated with the user and matching the coupon code
+    // Find the user's coupon
     const coupon = await Coupon.findOne({ userId });
 
-   
-if (!coupon || coupon.value <= 0 || coupon.couponCode !== couponCode) {
-      return res.status(404).json({
+    // Handle cases where the coupon is not found or is invalid
+    if (!coupon || coupon.value <= 0 || coupon.couponCode !== couponCode) {
+      return res.status(200).json({
         message: 'No valid coupon found for this user',
+        coupon: null,
       });
     }
 
     // Deduct the used value from the coupon
-    coupon.value -= usedValue;
+    coupon.value = Math.max(0, coupon.value - usedValue); // Ensure it doesn't go negative
 
-    // Mark the coupon as invalid if the value is exhausted
-    if (coupon.value <= 0) {
+    // Mark as invalid if fully used
+    if (coupon.value === 0) {
       coupon.isValid = false;
-      coupon.value = 0; // Ensure no negative values
     }
 
     // Save the updated coupon
