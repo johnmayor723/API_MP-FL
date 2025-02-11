@@ -118,8 +118,9 @@ exports.validateCoupon = async (req, res) => {
     const validCoupon = await Coupon.findOne({ userId, isValid: true });
 
     if (!validCoupon) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: 'No active coupon found for this user',
+        coupon:null
       });
     }
 
