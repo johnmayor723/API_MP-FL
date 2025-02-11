@@ -154,9 +154,10 @@ exports.updateCouponValue = async (req, res) => {
     }
 
     // Find an active coupon associated with the user and matching the coupon code
-    const coupon = await Coupon.findOne({ userId, couponCode, isValid: true });
+    const coupon = await Coupon.findOne({ userId });
 
-    if (!coupon) {
+   
+if (!coupon || coupon.value <= 0 || coupon.couponCode !== couponCode) {
       return res.status(404).json({
         message: 'No valid coupon found for this user',
       });
