@@ -130,7 +130,7 @@ router.post('/activate-coupon', activateCoupon);
 router.post('/validate-coupon', validateCoupon);
 
 // Update Coupon Value
-router.post('/update-coupon', updateCouponValue);
+router.put('/update-coupon', updateCouponValue);
 
 // user accounts routes
 router.post("/wishlist",  addToWishlist);
