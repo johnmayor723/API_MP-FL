@@ -142,7 +142,7 @@ exports.validateCoupon = async (req, res) => {
 
 // Update Coupon Value
 exports.updateCouponValue = async (req, res) => {
-  const { couponCode, usedValue, userId } = req.body;
+  const { couponId, usedValue, userId } = req.body;
 
   try {
     // Validate if the user ID exists
