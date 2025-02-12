@@ -252,16 +252,26 @@ exports.updateOrderHistory = async (req, res) => {
 // Update Address
 exports.updateAddress = async (req, res) => {
   try {
-    const user = req.user; // Assume req.user is populated from protect middleware
-    const { address } = req.body;
+    const { userId, address } = req.body;
 
-    if (!address) return res.status(400).json({ message: "Address is required." });
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required." });
+    }
+    if (!address) {
+      return res.status(400).json({ message: "Address is required." });
+    }
 
-    // Update the user's address
-    user.address = address;
-    await user.save();
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { address },
+      { new: true } // Removed runValidators
+    );
 
-    res.status(200).json({ message: "Address updated.", address: user.address });
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.status(200).json({ message: "Address updated.", address: updatedUser.address });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
