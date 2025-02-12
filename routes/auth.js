@@ -136,7 +136,7 @@ router.put('/update-coupon', updateCouponValue);
 router.post("/wishlist",  addToWishlist);
 router.post("/recently-viewed", addToRecentlyViewed);
 router.post("/update-order-history", updateOrderHistory);
-router.post("/update-address", updateAddress);
+router.put("/update-address", updateAddress);
 router.post("/profile", getUserProfile);
 
 
