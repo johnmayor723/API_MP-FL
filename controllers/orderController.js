@@ -18,8 +18,8 @@ exports.createPaystackSession = async (req, res) => {
       },
     });
 
-   res.json({ response.data});
-   // res.json({ authUrl: response.data.data.authorization_url });
+   //res.json({ response.data});
+   res.json({ authUrl: response.data.data.authorization_url });
   } catch (error) {
     res.status(500).json({ error: 'Failed to create Paystack session.' });
   }
