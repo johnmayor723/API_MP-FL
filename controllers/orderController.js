@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 // Function to create a new Paystack session
 exports.createPaystackSession = async (req, res) => {
-  const key = "sk_test_47a922977d226501a1a3b8d45ee433cc73c07bd2";
+  const key = "sk_test_7b18a89eb24b2eb1431f6e8c15e4697428e297b9";
   const { email, amount } = req.body;
 
   try {
