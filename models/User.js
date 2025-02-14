@@ -11,10 +11,10 @@ const userSchema = new mongoose.Schema({
   recentlyViewed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   address: {
     mobile:{ type:Number },
-    hnumber: { type: Number, required: true },
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true }
+    hnumber: { type: Number },
+    street: { type: String},
+    city: { type: String },
+    state: { type: String}
   }
 });
 
