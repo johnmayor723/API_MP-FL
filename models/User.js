@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
     street: { type: String},
     city: { type: String },
     state: { type: String}
-  }
+  },
+  verificationToken: { type: String }, // Stores email verification token
+});
+
 });
 
 
