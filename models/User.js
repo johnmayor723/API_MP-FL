@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema({
     city: { type: String },
     state: { type: String }
   },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   verificationToken: { type: String }, // Stores email verification token
 });
 
