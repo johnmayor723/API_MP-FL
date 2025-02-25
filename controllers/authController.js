@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const client = new OAuth2Client("328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com");
 
 exports.googleLogin = async (req, res) => {
   try {
@@ -17,7 +17,7 @@ exports.googleLogin = async (req, res) => {
     // Verify the Google token
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: "328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com",
     });
 
     const { name, email, picture, sub } = ticket.getPayload(); // Extract user info
@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Send verification email
-    const verificationUrl = `https://api.foodliie.com/verify-email/${user.verificationToken}`;
+    const verificationUrl = `https://api.foodliie.com/auth/verify-email/${user.verificationToken}`;
     sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
 
     res.json({ message: "Registration successful. Check your email for verification link." });
@@ -127,7 +127,7 @@ exports.requestPasswordReset = async (req, res) => {
     await user.save();
 
     // Send reset email
-    const resetUrl = `https://api.foodliie.com/reset-password/${user.resetPasswordToken}`;
+    const resetUrl = `https://api.foodliie.com/auth/reset-password/${user.resetPasswordToken}`;
     sendEmail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);
 
     res.json({ message: "Password reset link sent to email." });
