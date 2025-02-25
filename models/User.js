@@ -10,24 +10,23 @@ const userSchema = new mongoose.Schema({
   coupons: [{ couponId: String }], // Array of used coupon promo identifiers
   recentlyViewed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   address: {
-    mobile:{ type:Number },
+    mobile: { type: Number },
     hnumber: { type: Number },
-    street: { type: String},
+    street: { type: String },
     city: { type: String },
-    state: { type: String}
+    state: { type: String }
   },
   verificationToken: { type: String }, // Stores email verification token
 });
 
-});
-
-
+// Middleware to hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
+// Method to compare passwords
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
