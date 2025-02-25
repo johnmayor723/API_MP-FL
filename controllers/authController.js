@@ -1,55 +1,44 @@
 const User = require('../models/User');
 const Coupon = require('../models/Coupon');
 const CouponCode = require('../models/CouponCode')
-const { OAuth2Client } = require('google-auth-library');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
 
-const client = new OAuth2Client("328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com");
-
-
-exports.googleLogin = async (req, res) => {
-  try {
-    const { token } = req.body; // Get the Google token from the frontend
-
-    // Verify the Google token
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: "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",
-    });
-
-    const { name, email, picture, sub } = ticket.getPayload(); // Extract user info
-
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      // Register new user if they don't exist
-      user = new User({ name, email, password: sub }); // Use Google 'sub' as a dummy password
-      await user.save();
-    }
-
-    // Generate JWT token for session
-    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    });
-
-    res.json({ token: jwtToken, user });
-
-  } catch (error) {
-    console.error('Google login error:', error);
-    res.status(500).json({ message: 'Authentication failed' });
-  }
-};
-
-
-
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = new User({ name, email, password });
+    // Generate verification token
+    user.verificationToken = crypto.randomBytes(32).toString("hex");
     await user.save();
+
+    // Send verification email
+    const verificationUrl = `https://api.foodliie.com/verify-email/${user.verificationToken}`;
+    sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
+
+    res.json({ message: "Registration successful. Check your email for verification link." });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+  const sendEmail = async (to, subject, text) => {
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+    user: "fooddeck3@gmail.com",
+    pass: "zffe bqjv xqha haln", // Replace with actual password
+  },
+  });
+
+  await transporter.sendMail({
+    from: `"Market Picks" <fooddeck3@gmail.com>`,
+    to,
+    subject,
+    text,
+  });
+};
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
@@ -70,6 +59,63 @@ exports.login = async (req, res) => {
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
   res.json({ token });
 };
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) return res.status(400).json({ error: "Invalid or expired token" });
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.json({ message: "Email verified successfully. You can now log in." });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+exports.requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Generate reset token
+    user.resetPasswordToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiration
+
+    await user.save();
+
+    // Send reset email
+    const resetUrl = `https://api.foodliie.com/reset-password/${user.resetPasswordToken}`;
+    sendEmail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);
+
+    res.json({ message: "Password reset link sent to email." });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+
+    if (!user) return res.status(400).json({ error: "Invalid or expired token" });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.json({ message: "Password reset successful. You can now log in." });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 
 
 // Activate Coupon for a User
