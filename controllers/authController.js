@@ -1,10 +1,47 @@
 const User = require('../models/User');
 const Coupon = require('../models/Coupon');
 const CouponCode = require('../models/CouponCode')
-
+const { OAuth2Client } = require('google-auth-library');
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body; // Get the Google token from the frontend
+
+    // Verify the Google token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { name, email, picture, sub } = ticket.getPayload(); // Extract user info
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Register new user if they don't exist
+      user = new User({ name, email, password: sub }); // Use Google 'sub' as a dummy password
+      await user.save();
+    }
+
+    // Generate JWT token for session
+    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
+
+    res.json({ token: jwtToken, user });
+
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ message: 'Authentication failed' });
+  }
+};
 
 exports.register = async (req, res) => {
   try {
@@ -46,6 +83,7 @@ exports.register = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
