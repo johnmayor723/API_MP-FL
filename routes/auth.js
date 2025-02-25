@@ -17,7 +17,8 @@ const {
   updateAddress, 
   verifyEmail, 
   requestPasswordReset, 
-  resetPassword 
+  resetPassword,
+  googleLogin
 } = require("../controllers/authController");
 
 
@@ -144,5 +145,7 @@ router.post("/profile", getUserProfile);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/reset-password/:token", resetPassword);
+router.post("/google-login", googleLogin);
+
 
 module.exports = router;
