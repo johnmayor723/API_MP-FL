@@ -47,26 +47,33 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = new User({ name, email, password });
+
     // Generate verification token
     user.verificationToken = crypto.randomBytes(32).toString("hex");
     await user.save();
 
     // Send verification email
     const verificationUrl = `https://api.foodliie.com/auth/verify-email/${user.verificationToken}`;
-    sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
+    await sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
 
-    res.json({ message: "Registration successful. Check your email for verification link." });
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.json({ message: "Registration successful. Check your email for verification link.", token });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 };
-  const sendEmail = async (to, subject, text) => {
+
+// Send email function
+const sendEmail = async (to, subject, text) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-    user: "fooddeck3@gmail.com",
-    pass: "zffe bqjv xqha haln", // Replace with actual password
-  },
+      user: "fooddeck3@gmail.com",
+      pass: "zffe bqjv xqha haln", // Replace with actual password
+    },
   });
 
   await transporter.sendMail({
@@ -75,13 +82,6 @@ exports.register = async (req, res) => {
     subject,
     text,
   });
-};
-
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
 };
 
 
