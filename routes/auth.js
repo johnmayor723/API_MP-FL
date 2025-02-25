@@ -14,7 +14,10 @@ const {
   addToRecentlyViewed, 
   updateOrderHistory, 
   getUserProfile, 
-  updateAddress 
+  updateAddress, 
+  verifyEmail, 
+  requestPasswordReset, 
+  resetPassword 
 } = require("../controllers/authController");
 
 
@@ -138,6 +141,8 @@ router.post("/recently-viewed", addToRecentlyViewed);
 router.post("/update-order-history", updateOrderHistory);
 router.put("/update-address", updateAddress);
 router.post("/profile", getUserProfile);
-
+router.get("/verify-email/:token", verifyEmail);
+router.post("/request-password-reset", requestPasswordReset);
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;
