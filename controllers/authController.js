@@ -69,11 +69,14 @@ exports.register = async (req, res) => {
 // Send email function
 const sendEmail = async (to, subject, text) => {
   let transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.zoho.com",
+    port: 465,
+    secure: "true",
     auth: {
-      user: "fooddeck3@gmail.com",
-      pass: "zffe bqjv xqha haln", // Replace with actual password
+      user: "support@marketspick.com",
+      pass: "#@T1onal_Mayor",
     },
+  });
   });
 
   await transporter.sendMail({
