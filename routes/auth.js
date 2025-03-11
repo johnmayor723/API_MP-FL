@@ -21,7 +21,7 @@ const {
   googleLogin
 } = require("../controllers/authController");
 
-router.post("/register", googleLogin)
+router.post("/register", register)
 /*Register a new user
 router.post(
   '/register',
