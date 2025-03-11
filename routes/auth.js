@@ -77,6 +77,16 @@ router.post(
   }
 );*/
 
+// Delete all users (Use with caution)
+router.delete("/", async (req, res) => {
+    try {
+        await User.deleteMany({});
+        res.json({ message: "All users deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete users", details: error.message });
+    }
+});
+
 // Login user and get token
 router.post(
   '/login',
