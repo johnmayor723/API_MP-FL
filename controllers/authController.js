@@ -54,7 +54,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Send verification email
-    const verificationUrl = `https://api.foodliie.com/auth/verify-email/${user.verificationToken}`;
+    const verificationUrl = `https://api.foodliie.com/api/auth/verify-email/${user.verificationToken}`;
     await sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
 
     // Generate JWT token
