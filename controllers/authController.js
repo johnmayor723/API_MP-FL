@@ -78,7 +78,7 @@ const sendEmail = async (to, subject, text) => {
       pass: "#@T1onal_Mayor",
     },
   });
-  });
+ 
 
   await transporter.sendMail({
     from: `"Market Picks" <support@marketspick.com>`,
