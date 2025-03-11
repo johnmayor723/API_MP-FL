@@ -131,7 +131,7 @@ exports.requestPasswordReset = async (req, res) => {
     await user.save();
 
     // Send reset email
-    const resetUrl = `https://marketspick.com/auth/reset-password/${user.resetPasswordToken}`;
+    const resetUrl = `https://marketspick.com/api/auth/reset-password/${user.resetPasswordToken}`;
     sendEmail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);
 
     res.json({ message: "Password reset link sent to email." });
