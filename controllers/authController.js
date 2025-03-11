@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
 
+const jwtSecret = "%^^__64sffyyyuuyrrrewe32e";
 const client = new OAuth2Client("328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com");
 
 exports.googleLogin = async (req, res) => {
@@ -31,7 +32,7 @@ exports.googleLogin = async (req, res) => {
     }
 
     // Generate JWT token for session
-    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const jwtToken = jwt.sign({ userId: user._id },jwtSecret , {
       expiresIn: '7d',
     });
 
@@ -53,11 +54,11 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Send verification email
-    const verificationUrl = `https://api.foodliie.com/auth/verify-email/${user.verificationToken}`;
+    const verificationUrl = `https://marketspick.com/auth/verify-email/${user.verificationToken}`;
     await sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: "1h" });
 
     res.json({ message: "Registration successful. Check your email for verification link.", token });
   } catch (error) {
@@ -80,7 +81,7 @@ const sendEmail = async (to, subject, text) => {
   });
 
   await transporter.sendMail({
-    from: `"Market Picks" <fooddeck3@gmail.com>`,
+    from: `"Market Picks" <support@marketspick.com>`,
     to,
     subject,
     text,
@@ -97,7 +98,7 @@ exports.login = async (req, res) => {
   const isMatch = await user.comparePassword(password);
   if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '1h' });
   res.json({ token });
 };
 exports.verifyEmail = async (req, res) => {
