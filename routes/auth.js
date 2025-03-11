@@ -21,8 +21,8 @@ const {
   googleLogin
 } = require("../controllers/authController");
 
-
-// Register a new user
+router.post("/register", googleLogin)
+/*Register a new user
 router.post(
   '/register',
   [
@@ -75,7 +75,7 @@ router.post(
       res.status(500).send('Server error');
     }
   }
-);
+);*/
 
 // Login user and get token
 router.post(
