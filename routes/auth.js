@@ -21,6 +21,30 @@ const {
   googleLogin
 } = require("../controllers/authController");
 
+// **Google Login Route (API)**
+app.post("/google-auth", async (req, res) => {
+    const { email, name, googleId } = req.body;
+
+    try {
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Prevent duplicate registration
+            const hashedPassword = await bcrypt.hash(googleId, 10); // Hash Google ID as default password
+            user = new User({ name, email, googleId, password: hashedPassword });
+            await user.save();
+        }
+
+        // Generate JWT
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        res.json({ user, token });
+    } catch (error) {
+        console.error("API Google Auth Error:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 router.post("/register", register)
 /*Register a new user
 router.post(
