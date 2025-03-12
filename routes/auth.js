@@ -1,4 +1,4 @@
-const express = require('express');
+oconst express = require('express');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -22,7 +22,7 @@ const {
 } = require("../controllers/authController");
 
 // **Google Login Route (API)**
-app.post("/google-auth", async (req, res) => {
+router.post("/google-auth", async (req, res) => {
     const { email, name, googleId } = req.body;
 
     try {
