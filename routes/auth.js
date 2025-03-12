@@ -20,7 +20,7 @@ const {
   resetPassword,
   googleLogin
 } = require("../controllers/authController");
-
+const JWTSECRET = "dfgghhyy65443322edfhhhjj";
 // **Google Login Route (API)**
 router.post("/google-auth", async (req, res) => {
     const { email, name, googleId } = req.body;
@@ -36,7 +36,7 @@ router.post("/google-auth", async (req, res) => {
         }
 
         // Generate JWT
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        const token = jwt.sign({ userId: user._id }, JWTSECRET, { expiresIn: "7d" });
 
         res.json({ user, token });
     } catch (error) {
