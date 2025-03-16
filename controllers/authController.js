@@ -139,26 +139,47 @@ exports.requestPasswordReset = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// reset password route..
 exports.resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
+    console.log("Received reset request with token:", token);
+
     const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
 
-    if (!user) return res.status(400).json({ error: "Invalid or expired token" });
+    if (!user) {
+      console.log("Invalid or expired token.");
+      return res.status(400).json({ error: "Invalid or expired token" });
+    }
+
+    console.log("User found:", user.email); // Log email instead of hashed password for security
+
+    // Log the old password hash
+    console.log("Before password update, hashed password:", user.password);
 
     user.password = await bcrypt.hash(newPassword, 10);
+
+    // Log the new password hash
+    console.log("After password update, hashed password:", user.password);
+
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
 
     await user.save();
+    console.log("User successfully saved with updated password.");
+
+    // Fetch user again to confirm password update
+    const updatedUser = await User.findById(user._id);
+    console.log("User fetched after save:", updatedUser.password);
 
     res.json({ message: "Password reset successful. You can now log in." });
+
   } catch (error) {
+    console.error("Error resetting password:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
-
-
 
 // Activate Coupon for a User
 exports.activateCoupon = async (req, res) => {
