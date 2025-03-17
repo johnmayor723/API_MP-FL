@@ -28,8 +28,9 @@ const twilio = require('twilio')
 
 // Twilio Credentials
 const TWILIO_SID = "ACd9128943daa2cd9628701dc936448230";
-const TWILIO_AUTH_TOKEN = "c2a3b977431298d52fc4e4d45458a08c";
-const TWILIO_VERIFY_SID = "VA5fba2e26e3d83968bda8b1f3f1b0eab8";
+const TWILIO_AUTH_TOKEN = "7e2e2e32dcb970f9d05ee2f75bc05194";
+
+const TWILIO_VERIFY_SID = "VA5fba2e26e3d83968bda8b1f3f1b0eab8"
 
 const twilioClient = twilio(TWILIO_SID, TWILIO_AUTH_TOKEN);
 
