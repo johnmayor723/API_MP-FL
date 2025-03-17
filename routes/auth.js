@@ -187,7 +187,7 @@ router.post("/confirm-otp", async (req, res) => {
       return res.status(400).json({ error: "Invalid OTP" });
     }
 
-    let user = await User.findOne({ phoneNumber });
+    let user = await User.findOne({ phoneNumber:formattedPhone });
     console.log("User found:", user);
 
     if (!user) {
