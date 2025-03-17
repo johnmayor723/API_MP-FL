@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, unique: true },
   phoneNumber: { type: Number},
-  password: { type: String, required: true },
+  password: { type: String},
   isAdmin: { type: Boolean, default: false },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   coupons: [{ couponId: String }], // Array of used coupon promo identifiers
