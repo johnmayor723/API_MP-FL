@@ -126,6 +126,7 @@ router.post(
 // Handle Name & Phone Number, Send OTP
 router.post("/send-otp", async (req, res) => {
   const { name, phoneNumber } = req.body;
+  const email = req.body.email ? req.body.email.trim().toLowerCase() : `user_${phoneNumber}@example.com`;
   console.log("Received request to send OTP:", { name, phoneNumber });
 
   if (!name || !phoneNumber) {
@@ -141,7 +142,7 @@ router.post("/send-otp", async (req, res) => {
     console.log("User found:", user);
 
     if (!user) {
-      user = new User({ name, phoneNumber:formattedPhone });
+      user = new User({ name, phoneNumber:formattedPhone, email});
       await user.save();
       console.log("New user created:", user);
     }
