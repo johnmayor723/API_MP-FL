@@ -4,12 +4,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
+
 const { 
   register, 
   login, 
   activateCoupon, 
   validateCoupon, 
-  updateCouponValue, 
+  updateCouponValue,
   addToWishlist, 
   addToRecentlyViewed, 
   updateOrderHistory, 
@@ -21,7 +22,18 @@ const {
   googleLogin
 } = require("../controllers/authController");
 const JWTSECRET = "dfgghhyy65443322edfhhhjj";
-// **Google Login Route (API)**
+// **Google Login Route
+
+const twilio = require('twilio')
+
+// Twilio Credentials
+const TWILIO_SID = "ACd9128943daa2cd9628701dc936448230";
+const TWILIO_AUTH_TOKEN = "c2a3b977431298d52fc4e4d45458a08c";
+const TWILIO_VERIFY_SID = "VA5fba2e26e3d83968bda8b1f3f1b0eab8";
+
+const twilioClient = twilio(TWILIO_SID, TWILIO_AUTH_TOKEN);
+
+//google auth route
 router.post("/google-auth", async (req, res) => {
     const { email, name, googleId } = req.body;
 
@@ -46,60 +58,7 @@ router.post("/google-auth", async (req, res) => {
 });
 
 router.post("/register", register)
-/*Register a new user
-router.post(
-  '/register',
-  [
-    check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
 
-    const { name, email, password, role} = req.body;
-
-    try {
-      let user = await User.findOne({ email });
-      if (user) {
-        return res.status(400).json({ msg: 'User already exists' });
-      }
-       
-       // Create new user object
-      user = new User({
-        name,
-        email,
-        password,
-        role: role && role === 'admin' ? 'admin' : 'user' // Conditional role assignment
-      });
-      
-      await user.save();
-
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      const token = jwt.sign(payload, "dfgghhyy65443322edfhhhjj", { expiresIn: '1h' });
-      res.status(201).json({
-        token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-      });
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-    }
-  }
-);*/
 
 // Delete all users (Use with caution)
 router.delete("/", async (req, res) => {
@@ -112,6 +71,7 @@ router.delete("/", async (req, res) => {
 });
 
 // Login user and get token
+
 router.post(
   '/login',
   [
@@ -159,6 +119,90 @@ router.post(
     }
   }
 );
+
+
+//  **Step 1: Handle Name & Phone Number, Send OTP**
+// Handle Name & Phone Number, Send OTP
+router.post("/send-otp", async (req, res) => {
+  const { name, phoneNumber } = req.body;
+  console.log("Received request to send OTP:", { name, phoneNumber });
+
+  if (!name || !phoneNumber) {
+    console.error("Error: Missing name or phone number");
+    return res.status(400).json({ error: "Phone number and name are required" });
+  }
+
+  const formattedPhone = phoneNumber.startsWith("+234") ? phoneNumber : `+234${phoneNumber}`;
+  console.log("Formatted phone number:", formattedPhone);
+
+  try {
+    let user = await User.findOne({ phoneNumber });
+    console.log("User found:", user);
+
+    if (!user) {
+      user = new User({ name, phoneNumber });
+      await user.save();
+      console.log("New user created:", user);
+    }
+
+    console.log("Sending OTP via Twilio to:", formattedPhone);
+    const response = await twilioClient.verify.v2
+      .services(TWILIO_VERIFY_SID)
+      .verifications.create({ to: formattedPhone, channel: "sms" });
+
+    console.log("Twilio OTP Response:", response);
+    res.json({ success: true, message: "OTP sent", phoneNumber: formattedPhone });
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    res.status(500).json({ error: "Failed to send OTP", details: error.message });
+  }
+});
+router.post("/confirm-otp", async (req, res) => {
+  const { phoneNumber, otp } = req.body;
+  console.log("Received request to confirm OTP:", { phoneNumber, otp });
+
+  if (!phoneNumber || !otp) {
+    console.error("Error: Missing phone number or OTP");
+    return res.status(400).json({ error: "Phone number and OTP are required" });
+  }
+
+  const formattedPhone = phoneNumber.startsWith("+234") ? phoneNumber : `+234${phoneNumber}`;
+  console.log("Formatted phone number:", formattedPhone);
+
+  try {
+    // Verify OTP via Twilio
+    console.log("Verifying OTP with Twilio...");
+    const verification = await twilioClient.verify.v2
+      .services(TWILIO_VERIFY_SID)
+      .verificationChecks.create({ to: formattedPhone, code: otp });
+
+    console.log("Twilio OTP Verification Response:", verification);
+
+    if (verification.status !== "approved") {
+      console.error("Invalid OTP:", verification);
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    let user = await User.findOne({ phoneNumber });
+    console.log("User found:", user);
+
+    if (!user) {
+      console.error("User not found in database");
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Generate JWT Token for authentication
+    const token = jwt.sign({ phoneNumber: user.phoneNumber, name: user.name }, JWTSECRET, {
+      expiresIn: "7d",
+    });
+
+    console.log("JWT Token generated for user:", user);
+    res.json({ success: true, message: "OTP verified", token, user });
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    res.status(500).json({ error: "Failed to verify OTP", details: error.message });
+  }
+});
 //user's coupon routes
 
 // Validate Active Coupon
