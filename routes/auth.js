@@ -137,11 +137,11 @@ router.post("/send-otp", async (req, res) => {
   console.log("Formatted phone number:", formattedPhone);
 
   try {
-    let user = await User.findOne({ phoneNumber });
+    let user = await User.findOne({ phoneNumber:formattedPhone});
     console.log("User found:", user);
 
     if (!user) {
-      user = new User({ name, phoneNumber });
+      user = new User({ name, phoneNumber:formattedPhone });
       await user.save();
       console.log("New user created:", user);
     }
@@ -158,6 +158,8 @@ router.post("/send-otp", async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP", details: error.message });
   }
 });
+
+/// confirm otp route
 router.post("/confirm-otp", async (req, res) => {
   const { phoneNumber, otp } = req.body;
   console.log("Received request to confirm OTP:", { phoneNumber, otp });
