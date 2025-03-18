@@ -158,7 +158,7 @@ exports.resetPassword = async (req, res) => {
     // Log the old password hash
     console.log("Before password update, hashed password:", user.password);
 
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = newPassword
 
     // Log the new password hash
     console.log("After password update, hashed password:", user.password);
