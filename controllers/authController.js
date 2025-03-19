@@ -224,33 +224,34 @@ exports.mobileRequestPasswordReset = async (req, res) => {
 
 // verify otp and reset password
 
-exports.mobileResetPassword = async (req, res) => {
+exports.resetPassword = async (req, res) => {
   try {
     const { otp, newPassword } = req.body;
 
-    const user = await User.findOne({
-      mobileOtp: otp,
-      mobileOtpExpires: { $gt: Date.now() },
-    });
+    console.log("Received OTP:", otp);  // Log received OTP
+    console.log("Received new password:", newPassword);
+
+    const user = await User.findOne({ mobileOtp: otp });
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid or expired OTP" });
+      console.log("Invalid OTP. User not found.");
+      return res.status(400).json({ error: "Invalid OTP" });
     }
 
-    // Log user email for debugging
-    console.log("User found:", user.email);
+    // Convert OTPs to strings before comparison
+    if (String(user.mobileOtp) !== String(otp)) {
+      console.log(`OTP Mismatch: DB(${user.mobileOtp}) !== Request(${otp})`);
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
 
-    // Log old password before update
-    console.log("Before password update, password:", user.password);
+    console.log("OTP Verified for user:", user.email);
 
-    user.password = newPassword; // Password hashing will occur in the User model
-    user.mobileOtp = undefined;
-    user.mobileOtpExpires = undefined;
+    // Update password (no hashing since it's handled in the model)
+    user.password = newPassword;
+    user.mobileOtp = undefined; // Clear OTP after use
 
     await user.save();
-
-    // Log new password after update
-    console.log("After password update, password:", user.password);
+    console.log("Password successfully updated for:", user.email);
 
     res.json({ message: "Password reset successful. You can now log in." });
 
