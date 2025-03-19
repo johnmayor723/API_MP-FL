@@ -194,6 +194,73 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+// mobile apps password reset routes
+
+//request otp
+
+exports.mobileRequestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Generate a 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    user.mobileOtp = otp;
+    user.mobileOtpExpires = Date.now() + 3600000; // 1 hour expiration
+
+    await user.save();
+
+    // Send OTP via email
+    sendEmail(user.email, "Password Reset OTP", `Your OTP for password reset is: ${otp}`);
+
+    res.json({ message: "Password reset OTP sent to email." });
+  } catch (error) {
+    console.error("Error requesting password reset:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// verify otp and reset password
+
+exports.mobileResetPassword = async (req, res) => {
+  try {
+    const { otp, newPassword } = req.body;
+
+    const user = await User.findOne({
+      mobileOtp: otp,
+      mobileOtpExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired OTP" });
+    }
+
+    // Log user email for debugging
+    console.log("User found:", user.email);
+
+    // Log old password before update
+    console.log("Before password update, password:", user.password);
+
+    user.password = newPassword; // Password hashing will occur in the User model
+    user.mobileOtp = undefined;
+    user.mobileOtpExpires = undefined;
+
+    await user.save();
+
+    // Log new password after update
+    console.log("After password update, password:", user.password);
+
+    res.json({ message: "Password reset successful. You can now log in." });
+
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
 // Activate Coupon for a User
 exports.activateCoupon = async (req, res) => {
   try {

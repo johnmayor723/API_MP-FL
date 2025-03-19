@@ -19,6 +19,8 @@ const {
   verifyEmail, 
   requestPasswordReset, 
   resetPassword,
+  mobileRequestPasswordReset, 
+  mobileResetPassword,
   googleLogin
 } = require("../controllers/authController");
 const JWTSECRET = "dfgghhyy65443322edfhhhjj";
@@ -227,6 +229,8 @@ router.post("/profile", getUserProfile);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/reset-password/:token", resetPassword);
+router.post("/mobile-request-password-reset", mobileRequestPasswordReset);
+router.post("/mobile-reset-password/:token", mobileResetPassword);
 router.post("/google-login", googleLogin);
 
 
