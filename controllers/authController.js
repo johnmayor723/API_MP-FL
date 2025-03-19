@@ -224,7 +224,7 @@ exports.mobileRequestPasswordReset = async (req, res) => {
 
 // verify otp and reset password
 
-exports.resetPassword = async (req, res) => {
+exports.mobileResetPassword = async (req, res) => {
   try {
     const { otp, newPassword } = req.body;
 
