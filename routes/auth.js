@@ -230,7 +230,7 @@ router.get("/verify-email/:token", verifyEmail);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/reset-password/:token", resetPassword);
 router.post("/mobile-request-password-reset", mobileRequestPasswordReset);
-router.post("/mobile-reset-password/:token", mobileResetPassword);
+router.post("/mobile-reset-password", mobileResetPassword);
 router.post("/google-login", googleLogin);
 
 
