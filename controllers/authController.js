@@ -163,17 +163,13 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) {
       console.log("Invalid or expired token.");
-      return res.status(400).json({ error: "Invalid or expired token" });
+      return res.redirect("https://marketspick.com/login?error=Invalid or expired token");
     }
 
     console.log("User found:", user.email); // Log email instead of hashed password for security
 
-    // Log the old password hash
     console.log("Before password update, hashed password:", user.password);
-
-    user.password = newPassword
-
-    // Log the new password hash
+    user.password = newPassword;
     console.log("After password update, hashed password:", user.password);
 
     user.resetPasswordToken = undefined;
@@ -182,15 +178,10 @@ exports.resetPassword = async (req, res) => {
     await user.save();
     console.log("User successfully saved with updated password.");
 
-    // Fetch user again to confirm password update
-    const updatedUser = await User.findById(user._id);
-    console.log("User fetched after save:", updatedUser.password);
-
-    res.json({ message: "Password reset successful. You can now log in." });
-
+    res.redirect("https://marketspick.com/login?success=Password reset successful");
   } catch (error) {
     console.error("Error resetting password:", error);
-    res.status(500).json({ error: "Server error" });
+    res.redirect("https://marketspick.com/login?error=Server error, please try again");
   }
 };
 
