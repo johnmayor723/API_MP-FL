@@ -178,7 +178,7 @@ exports.resetPassword = async (req, res) => {
     await user.save();
     console.log("User successfully saved with updated password.");
 
-    res.redirect("https://marketspick.com/success-Password-reset");
+    res.redirect("https://marketspick.com/success-password-reset");
   } catch (error) {
     console.error("Error resetting password:", error);
     res.redirect("https://marketspick.com/error-password-reset");
