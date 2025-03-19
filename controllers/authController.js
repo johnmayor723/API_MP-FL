@@ -163,7 +163,7 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) {
       console.log("Invalid or expired token.");
-      return res.redirect("https://marketspick.com/login?error=Invalid or expired token");
+      return res.redirect("https://marketspick.com/error-password-reset");
     }
 
     console.log("User found:", user.email); // Log email instead of hashed password for security
@@ -178,10 +178,10 @@ exports.resetPassword = async (req, res) => {
     await user.save();
     console.log("User successfully saved with updated password.");
 
-    res.redirect("https://marketspick.com/login?success=Password reset successful");
+    res.redirect("https://marketspick.com/success-Password-reset");
   } catch (error) {
     console.error("Error resetting password:", error);
-    res.redirect("https://marketspick.com/login?error=Server error, please try again");
+    res.redirect("https://marketspick.com/error-password-reset");
   }
 };
 
