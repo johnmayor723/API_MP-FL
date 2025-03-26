@@ -125,7 +125,7 @@ exports.verifyEmail = async (req, res) => {
     user.verificationToken = undefined;
     await user.save();
 
-    res.json({ message: "Email verified successfully. You can now log in." });
+    res.redirect("https://marketspick.com/signin2");
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
