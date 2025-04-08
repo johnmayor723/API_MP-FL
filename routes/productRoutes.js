@@ -14,7 +14,7 @@ router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
 
 // Update a product (Admin only)
-router.put('/:id',upload.any() productController.updateProduct);
+router.put('/:id',upload.any(), productController.updateProduct);
 
 // Delete a product (Admin only)
 router.delete('/:id', productController.deleteProduct);
