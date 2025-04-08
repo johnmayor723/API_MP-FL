@@ -5,7 +5,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 const upload = require("../config/helpers")
 
 // Create a new product (Admin only)
-router.post('/', upload.any(), productController.createProduct);
+router.post('/', productController.createProduct);
 
 // Get all products (Public)
 router.get('/', productController.getAllProducts);
