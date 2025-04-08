@@ -42,7 +42,26 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+// Route to retrieve an agent by email from the request body
+router.post('/find-by-email', async (req, res) => {
+  const { email } = req.body;
 
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  try {
+    const agent = await Agent.findOne({ email });
+    if (!agent) {
+      return res.status(404).json({ message: 'Agent not found' });
+    }
+
+    res.status(200).json({ agent });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 // Route to update an agent's couponCode by email
 router.put('/', async (req, res) => {
   const { email, couponCode } = req.body;

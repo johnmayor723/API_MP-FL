@@ -6,7 +6,9 @@ const orderSchema = new mongoose.Schema({
   name: String,
   email: String,
   shippingAddress: String,
+  code: String,
   totalAmount: Number,
+  
   status: {
     type: String,
     enum: ['processing', 'shipped', 'delivered'],

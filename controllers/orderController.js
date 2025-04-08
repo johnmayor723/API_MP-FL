@@ -27,13 +27,14 @@ exports.createPaystackSession = async (req, res) => {
 
 // Function to create a new order after payment is completed
 exports.createOrder = async (req, res) => {
-  const { name, email, shippingAddress, paymentReference, totalAmount } = req.body;
+  const { name, email, shippingAddress, paymentReference, totalAmount, code } = req.body;
 
   const newOrder = new Order({
     name,
     email,
     shippingAddress,
     totalAmount,
+    code,
     paymentReference,
     status: 'processing',
     uniqueId: uuidv4(),
@@ -46,13 +47,13 @@ exports.createOrder = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'fooddeck3@gmail.com',
-        pass: 'xyca sbvx hifi amzs',
+        useruser: 'marketpicks723@gmail.com',
+    pass: 'yvbqttivjtmvlbhp' // App password (no spaces)
       },
     });
 
     const mailOptions = {
-      from: 'your_email@gmail.com',
+    from: '"Market Picks" <marketpicks723@gmail.com>',
       to: email,
       subject: 'Order Confirmation',
       html: `
