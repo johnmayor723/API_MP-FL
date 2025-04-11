@@ -21,7 +21,8 @@ const {
   resetPassword,
   mobileRequestPasswordReset, 
   mobileResetPassword,
-  googleLogin
+  googleLogin,
+  getAllUsers
 } = require("../controllers/authController");
 const JWTSECRET = "dfgghhyy65443322edfhhhjj";
 // **Google Login Route
@@ -221,6 +222,7 @@ router.post('/validate-coupon', validateCoupon);
 router.put('/update-coupon', updateCouponValue);
 
 // user accounts routes
+router.get("/", getAllUsers);
 router.post("/wishlist",  addToWishlist);
 router.post("/recently-viewed", addToRecentlyViewed);
 router.post("/update-order-history", updateOrderHistory);
