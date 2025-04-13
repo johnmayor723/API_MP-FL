@@ -44,7 +44,7 @@ exports.googleLogin = async (req, res) => {
   }
 };
 
-exports.register = async (req, res) => {
+/*exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = new User({ name, email, password });
@@ -79,7 +79,34 @@ exports.register = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+*/
+const UserEmail = require('../models/UserEmail');
 
+exports.register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if email already used by an active user
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'Email already registered' });
+
+    // Remove any pending unverified user with same email
+    await UserEmail.deleteOne({ email });
+
+    const token = crypto.randomBytes(32).toString("hex");
+
+    const pendingUser = new UserEmail({ name, email, password, token });
+    await pendingUser.save();
+
+    const verificationUrl = `https://api.foodliie.com/api/auth/verify-email/${token}`;
+    await sendEmail(email, "Verify Your Email", `Click to verify: ${verificationUrl}`);
+
+    res.json({ message: 'Verification email sent. Please check your inbox.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -130,6 +157,7 @@ exports.login = async (req, res) => {
   const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '1h' });
   res.json({ token });
 };
+/*
 exports.verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
@@ -145,7 +173,31 @@ exports.verifyEmail = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
+};*/
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const pendingUser = await UserEmail.findOne({ token });
+
+    if (!pendingUser) return res.status(400).json({ error: 'Invalid or expired token' });
+
+    const { name, email, password } = pendingUser;
+
+    // Create the actual user
+    const user = new User({ name, email, password });
+    await user.save();
+
+    // Clean up the pending record
+    await UserEmail.deleteOne({ email });
+
+    res.redirect("https://marketspick.com/signin2");
+  } catch (error) {
+    console.error("Email verification failed:", error);
+    res.status(500).json({ error: "Server error" });
+  }
 };
+
 exports.requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
