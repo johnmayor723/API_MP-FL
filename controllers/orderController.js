@@ -117,6 +117,31 @@ exports.getAllOrders = async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve orders.' });
   }
 };
+// delete order
+exports.deleteOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedOrder = await Order.findByIdAndDelete(id);
+
+    if (!deletedOrder) {
+      return res.status(404).json({ error: 'Order not found.' });
+    }
+
+    res.json({ message: 'Order deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete order.' });
+  }
+};
+
+// delete all order
+exports.deleteAllOrders = async (req, res) => {
+  try {
+    await Order.deleteMany({});
+    res.json({ message: 'All orders deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete all orders.' });
+  }
+};
 
 // Function to get and update order status by ID
 exports.updateOrderStatus = async (req, res) => {

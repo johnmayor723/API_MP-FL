@@ -18,4 +18,8 @@ router.put('/:orderId', orderController.updateOrderStatus);
 // Route to track an order by unique ID
 router.get('/:uniqueId', orderController.trackOrder);
 
+router.delete('/:id', orderController.deleteOrder);
+router.delete('/', orderController.deleteAllOrder);
+
+
 module.exports = router;
