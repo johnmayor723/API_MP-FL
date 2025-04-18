@@ -19,7 +19,7 @@ router.put('/:orderId', orderController.updateOrderStatus);
 router.get('/:uniqueId', orderController.trackOrder);
 
 router.delete('/:id', orderController.deleteOrder);
-router.delete('/', orderController.deleteAllOrder);
+router.delete('/', orderController.deleteAllOrders);
 
 
 module.exports = router;
