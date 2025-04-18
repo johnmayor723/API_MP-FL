@@ -125,6 +125,36 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.getUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve user.' });
+  }
+};
+
+exports.deleteUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    res.json({ message: 'User deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete user.' });
+  }
+};
+
 // Send email function
 const sendEmail = async (to, subject, text) => {
   let transporter = nodemailer.createTransport({
