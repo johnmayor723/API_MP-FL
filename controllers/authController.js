@@ -127,17 +127,22 @@ exports.getAllUsers = async (req, res) => {
 
 // Send email function
 const sendEmail = async (to, subject, text) => {
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
+  const transporter = nodemailer.createTransport({
+  host: 'smtp.mailersend.net', // SMTP server
+  port: 587, // Use port 587 for TLS connection
+  secure: false, // Set to false for TLS connection
   auth: {
-    user: 'marketpicks723@gmail.com',
-    pass: 'yvbqttivjtmvlbhp' // App password (no spaces)
-  }
+    user: 'MS_5jbt07@test-86org8e2x8egew13.mlsender.net', // Your SMTP username
+    pass: 'mssp.1l7pSPW.3yxj6ljvwm1ldo2r.NmpWxBh', // Your SMTP password
+  },
+  tls: {
+    rejectUnauthorized: false, // Disable certificate validation if needed
+  },
 });
  
 
   await transporter.sendMail({
-    from: '"Market Picks" <marketpicks723@gmail.com>',
+    from: '"Market Picks" <MS_5jbt07@test-86org8e2x8egew13.mlsender.net>',
     to,
     subject,
     text,
