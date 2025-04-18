@@ -22,7 +22,9 @@ const {
   mobileRequestPasswordReset, 
   mobileResetPassword,
   googleLogin,
-  getAllUsers
+  getAllUsers,
+  deleteUserByEmail,
+  getUserByEmail
 } = require("../controllers/authController");
 const JWTSECRET = "dfgghhyy65443322edfhhhjj";
 // **Google Login Route
@@ -65,14 +67,14 @@ router.post("/register", register)
 
 
 // Delete all users (Use with caution)
-router.delete("/", async (req, res) => {
+/*router.delete("/", async (req, res) => {
     try {
         await User.deleteMany({});
         res.json({ message: "All users deleted successfully" });
     } catch (error) {
         res.status(500).json({ error: "Failed to delete users", details: error.message });
     }
-});
+});*/
 
 // Login user and get token
 
@@ -223,6 +225,8 @@ router.put('/update-coupon', updateCouponValue);
 
 // user accounts routes
 router.get("/", getAllUsers);
+router.get('/:email', getUserByEmail);
+router.delete('/:email', deleteUserByEmail);
 router.post("/wishlist",  addToWishlist);
 router.post("/recently-viewed", addToRecentlyViewed);
 router.post("/update-order-history", updateOrderHistory);
