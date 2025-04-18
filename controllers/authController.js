@@ -127,17 +127,12 @@ exports.getAllUsers = async (req, res) => {
 
 // Send email function
 const sendEmail = async (to, subject, text) => {
-  const transporter = nodemailer.createTransport({
-  host: 'smtp.mailersend.net', // SMTP server
-  port: 587, // Use port 587 for TLS connection
-  secure: false, // Set to false for TLS connection
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
   auth: {
-    user: 'MS_5jbt07@test-86org8e2x8egew13.mlsender.net', // Your SMTP username
-    pass: 'mssp.1l7pSPW.3yxj6ljvwm1ldo2r.NmpWxBh', // Your SMTP password
-  },
-  tls: {
-    rejectUnauthorized: false, // Disable certificate validation if needed
-  },
+    user: 'marketpicks723@gmail.com',
+    pass: 'yvbqttivjtmvlbhp' // App password (no spaces)
+  }
 });
  
 
@@ -185,7 +180,7 @@ exports.verifyEmail = async (req, res) => {
     const { token } = req.params;
     const pendingUser = await UserEmail.findOne({ token });
 
-    if (!pendingUser) return res.status(400).json({ error: 'Invalid or expired token' });
+    if (!pendingUser) return res.redirect("https://marketspick.com/token-error");
 
     const { name, email, password } = pendingUser;
 
@@ -199,7 +194,7 @@ exports.verifyEmail = async (req, res) => {
     res.redirect("https://marketspick.com/signin2");
   } catch (error) {
     console.error("Email verification failed:", error);
-    res.status(500).json({ error: "Server error" });
+    res.redirect("https://marketspick.com/token-error");
   }
 };
 
