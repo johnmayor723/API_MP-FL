@@ -195,7 +195,7 @@ exports.deleteAllOrders = async (req, res) => {
 
 // Function to get and update order status by ID
 exports.updateOrderStatus = async (req, res) => {
-  const { orderId } = req.params;
+  const { id } = req.params;
   const { status } = req.body;
 
   const validStatuses = ['shipped', 'delivered', 'cancelled'];

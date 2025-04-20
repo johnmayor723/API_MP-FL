@@ -13,7 +13,7 @@ router.post('/', orderController.createOrder);
 router.get('/', orderController.getAllOrders);
 
 // Route to update order status
-router.put('/:orderId', orderController.updateOrderStatus);
+router.put('/:id', orderController.updateOrderStatus);
 
 // Route to track an order by unique ID
 router.get('/:uniqueId', orderController.trackOrder);
