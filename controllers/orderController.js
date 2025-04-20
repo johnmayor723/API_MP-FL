@@ -27,22 +27,33 @@ exports.createPaystackSession = async (req, res) => {
 
 // Function to create a new order after payment is completed
 exports.createOrder = async (req, res) => {
-  const { name, email, shippingAddress, paymentReference, totalAmount, code } = req.body;
+  try {
+    const {
+      name,
+      email,
+      address,
+      mobile,
+      ordernotes,
+      amount,
+      paymentmethod,
+      code,
+    } = req.body;
 
-  const newOrder = new Order({
-    name,
-    email,
-    shippingAddress,
-    totalAmount,
-    code,
-    paymentReference,
-    status: 'processing',
-    uniqueId: uuidv4(),
-  });
+    const newOrder = new Order({
+      name,
+      email,
+      address,
+      mobile,
+      ordernotes,
+      totalAmount: amount,
+      paymentmethod,
+      code,
+      status: 'processing',
+    });
 
   try {
     const savedOrder = await newOrder.save();
-
+    console.log("saved order is:", savedOrder)
     // Send confirmation email with order details
     const transporter = nodemailer.createTransport({
       service: 'gmail',

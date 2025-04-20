@@ -1,14 +1,16 @@
-// models/Order.js
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 
 const orderSchema = new mongoose.Schema({
   name: String,
   email: String,
-  shippingAddress: String,
-  code: String,
+  address: String,
+  mobile: String,
+  ordernotes: String,
   totalAmount: Number,
-  
+  paymentmethod: String,
+  code: String,
+
   status: {
     type: String,
     enum: ['processing', 'shipped', 'delivered'],
@@ -22,3 +24,5 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);
+
+
