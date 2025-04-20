@@ -51,9 +51,33 @@ exports.createOrder = async (req, res) => {
       status: 'processing',
     });
 
+    await newOrder.save();
+
+    res.status(201).json({
+      message: `Order Successful: Payment method is "${paymentmethod === 'cashondelivery' ? 'Cash on Delivery' : paymentmethod}".`,
+      ...newOrder.toObject(),
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating order', error: error.message });
+  }
+};
+/*exports.createOrder = async (req, res) => {
+  const { name, email, shippingAddress, paymentReference, totalAmount, code } = req.body;
+
+  const newOrder = new Order({
+    name,
+    email,
+    shippingAddress,
+    totalAmount,
+    code,
+    paymentReference,
+    status: 'processing',
+    uniqueId: uuidv4(),
+  });
+
   try {
     const savedOrder = await newOrder.save();
-    console.log("saved order is:", savedOrder)
+
     // Send confirmation email with order details
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -117,7 +141,7 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to create order.' });
   }
-};
+};*/
 
 // Function to get all orders
 exports.getAllOrders = async (req, res) => {
