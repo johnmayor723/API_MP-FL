@@ -17,7 +17,7 @@ router.put('/:orderId', orderController.updateOrderStatus);
 
 // Route to track an order by unique ID
 router.get('/:uniqueId', orderController.trackOrder);
-
+router.get('/orders/:id', orderController.getOrderById);
 router.delete('/:id', orderController.deleteOrder);
 router.delete('/', orderController.deleteAllOrders);
 
