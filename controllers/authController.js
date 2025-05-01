@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const UserEmail = require('../models/UserEmail');
+
 const Coupon = require('../models/Coupon');
 const CouponCode = require('../models/CouponCode')
 const { OAuth2Client } = require('google-auth-library');
@@ -44,43 +46,7 @@ exports.googleLogin = async (req, res) => {
   }
 };
 
-/*exports.register = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const user = new User({ name, email, password });
 
-    // Generate verification token
-    user.verificationToken = crypto.randomBytes(32).toString("hex");
-    await user.save();
-
-    // Send verification email
-    const verificationUrl = `https://api.foodliie.com/api/auth/verify-email/${user.verificationToken}`;
-    await sendEmail(user.email, "Verify Your Email", `Click here to verify: ${verificationUrl}`);
-
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: "1h" });
-
-    // Remove password and verificationToken from user object before sending response
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt
-    };
-
-    res.json({
-      message: "Registration successful. Check your email for verification link.",
-      token,
-      user: userResponse
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-*/
-const UserEmail = require('../models/UserEmail');
 
 exports.register = async (req, res) => {
   try {
@@ -99,12 +65,25 @@ exports.register = async (req, res) => {
     const verificationUrl = `https://api.foodliie.com/api/auth/verify-email/${token}`;
 
     const htmlContent = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+
+    <!-- Header -->
+    <div style="text-align: center; padding: 10px;">
+      <img src="https://firebasestorage.googleapis.com/v0/b/videohub-a1679.appspot.com/o/Website%20250x100px%20(2).jpg?alt=media&token=d19cb8c2-0da9-4b2a-8063-7b22bfcc8481" 
+           alt="Marketpicks Logo" 
+           style="height: 50px;" />
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #ccc;">
+
+    <!-- Body -->
+    <div style="padding: 20px;">
       <p>Hi ${name},</p>
-      <p>Thank you for registering. Please click the button below to verify your email:</p>
+      <p>Thank you for registering with <strong>Marketpicks</strong>. Please click the button below to verify your email address:</p>
       <a href="${verificationUrl}" style="
         display: inline-block;
         padding: 12px 24px;
-        margin-top: 10px;
+        margin: 10px 0;
         background-color: #4CAF50;
         color: white;
         text-decoration: none;
@@ -112,9 +91,19 @@ exports.register = async (req, res) => {
         font-weight: bold;
       ">Verify Email</a>
       <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
-      <p>${verificationUrl}</p>
-    `;
+      <p style="word-break: break-all;">${verificationUrl}</p>
+    </div>
 
+    <hr style="border: 0; border-top: 1px solid #ccc;">
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 10px; font-size: 14px; color: #555;">
+      <p><strong>www.marketspick.com</strong></p>
+      <p>Email: info@marketspick.com | Phone: 09123907060</p>
+    </div>
+
+  </div>
+`;
     await sendEmail(email, "Verify Your Email", htmlContent);
 
     res.json({ message: 'Verification email sent. Please check your inbox.' });
@@ -304,12 +293,25 @@ exports.requestPasswordReset = async (req, res) => {
     const resetUrl = `https://marketspick.com/api/auth/reset-password/${user.resetPasswordToken}`;
 
     const htmlContent = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+
+    <!-- Header -->
+    <div style="text-align: center; padding: 10px;">
+      <img src="https://firebasestorage.googleapis.com/v0/b/videohub-a1679.appspot.com/o/Website%20250x100px%20(2).jpg?alt=media&token=d19cb8c2-0da9-4b2a-8063-7b22bfcc8481" 
+           alt="Marketpicks Logo" 
+           style="height: 50px;" />
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #ccc;">
+
+    <!-- Body -->
+    <div style="padding: 20px;">
       <p>Hi ${user.name || "there"},</p>
       <p>You requested to reset your password. Click the button below to proceed:</p>
       <a href="${resetUrl}" style="
         display: inline-block;
         padding: 12px 24px;
-        margin-top: 10px;
+        margin: 10px 0;
         background-color: #f44336;
         color: white;
         text-decoration: none;
@@ -318,9 +320,19 @@ exports.requestPasswordReset = async (req, res) => {
       ">Reset Password</a>
       <p>This link will expire in 1 hour.</p>
       <p>If you didn't request a password reset, you can safely ignore this email.</p>
-      <p>${resetUrl}</p>
-    `;
+      <p style="word-break: break-all;">${resetUrl}</p>
+    </div>
 
+    <hr style="border: 0; border-top: 1px solid #ccc;">
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 10px; font-size: 14px; color: #555;">
+      <p><strong>www.marketspick.com</strong></p>
+      <p>Email: info@marketspick.com | Phone: 09123907060</p>
+    </div>
+
+  </div>
+`;
     await sendEmail(user.email, "Password Reset Request", htmlContent);
 
     res.json({ message: "Password reset link sent to email." });
