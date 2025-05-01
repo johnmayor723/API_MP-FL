@@ -69,7 +69,7 @@ exports.register = async (req, res) => {
 
     <!-- Header -->
     <div style="text-align: center; padding: 10px;">
-      <img src="https://firebasestorage.googleapis.com/v0/b/videohub-a1679.appspot.com/o/Website%20250x100px%20(2).jpg?alt=media&token=d19cb8c2-0da9-4b2a-8063-7b22bfcc8481" 
+      <img src="https://firebasestorage.googleapis.com/v0/b/videohub-a1679.appspot.com/o/mmm12%20(1).png?alt=media&token=223e4e08-a842-482b-80d6-cba61213389f" 
            alt="Marketpicks Logo" 
            style="height: 50px;" />
     </div>
@@ -297,7 +297,7 @@ exports.requestPasswordReset = async (req, res) => {
 
     <!-- Header -->
     <div style="text-align: center; padding: 10px;">
-      <img src="https://firebasestorage.googleapis.com/v0/b/videohub-a1679.appspot.com/o/Website%20250x100px%20(2).jpg?alt=media&token=d19cb8c2-0da9-4b2a-8063-7b22bfcc8481" 
+      <img src="https://firebasestorage.googleapis.com/v0/b/videohub-a1679.appspot.com/o/mmm12%20(1).png?alt=media&token=223e4e08-a842-482b-80d6-cba61213389f" 
            alt="Marketpicks Logo" 
            style="height: 50px;" />
     </div>
