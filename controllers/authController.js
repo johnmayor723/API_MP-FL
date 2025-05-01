@@ -86,6 +86,66 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'Email already registered' });
+
+    await UserEmail.deleteOne({ email });
+
+    const token = crypto.randomBytes(32).toString("hex");
+
+    const pendingUser = new UserEmail({ name, email, password, token });
+    await pendingUser.save();
+
+    const verificationUrl = `https://api.foodliie.com/api/auth/verify-email/${token}`;
+
+    const htmlContent = `
+      <p>Hi ${name},</p>
+      <p>Thank you for registering. Please click the button below to verify your email:</p>
+      <a href="${verificationUrl}" style="
+        display: inline-block;
+        padding: 12px 24px;
+        margin-top: 10px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      ">Verify Email</a>
+      <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+      <p>${verificationUrl}</p>
+    `;
+
+    await sendEmail(email, "Verify Your Email", htmlContent);
+
+    res.json({ message: 'Verification email sent. Please check your inbox.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Updated sendEmail function
+const sendEmail = async (to, subject, html) => {
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'marketpicks723@gmail.com',
+      pass: 'yvbqttivjtmvlbhp'
+    }
+  });
+
+  await transporter.sendMail({
+    from: '"Market Picks" <marketpicks723@gmail.com>',
+    to,
+    subject,
+    html
+  });
+};
+
+/*exports.register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
     // Check if email already used by an active user
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: 'Email already registered' });
@@ -106,7 +166,7 @@ exports.register = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
-};
+};*/
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -155,7 +215,7 @@ exports.deleteUserByEmail = async (req, res) => {
   }
 };
 
-// Send email function
+/* Send email function
 const sendEmail = async (to, subject, text) => {
   let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -173,7 +233,7 @@ const sendEmail = async (to, subject, text) => {
     text,
   });
 };
-
+*/
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -235,6 +295,49 @@ exports.requestPasswordReset = async (req, res) => {
 
     if (!user) return res.status(404).json({ error: "User not found" });
 
+    // Generate reset token and expiration
+    user.resetPasswordToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    await user.save();
+
+    const resetUrl = `https://marketspick.com/api/auth/reset-password/${user.resetPasswordToken}`;
+
+    const htmlContent = `
+      <p>Hi ${user.name || "there"},</p>
+      <p>You requested to reset your password. Click the button below to proceed:</p>
+      <a href="${resetUrl}" style="
+        display: inline-block;
+        padding: 12px 24px;
+        margin-top: 10px;
+        background-color: #f44336;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      ">Reset Password</a>
+      <p>This link will expire in 1 hour.</p>
+      <p>If you didn't request a password reset, you can safely ignore this email.</p>
+      <p>${resetUrl}</p>
+    `;
+
+    await sendEmail(user.email, "Password Reset Request", htmlContent);
+
+    res.json({ message: "Password reset link sent to email." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+/*
+exports.requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
     // Generate reset token
     user.resetPasswordToken = crypto.randomBytes(32).toString("hex");
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiration
@@ -250,7 +353,7 @@ exports.requestPasswordReset = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
+*/
 // reset password route..
 exports.resetPassword = async (req, res) => {
   try {
