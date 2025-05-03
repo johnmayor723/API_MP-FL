@@ -62,7 +62,7 @@ exports.register = async (req, res) => {
     const pendingUser = new UserEmail({ name, email, password, token });
     await pendingUser.save();
 
-    const verificationUrl = `https://api.foodliie.com/api/auth/verify-email/${token}`;
+    const verificationUrl = `https://api.marketspick.com/api/auth/verify-email/${token}`;
 
     const htmlContent = `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
